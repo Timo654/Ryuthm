@@ -1,7 +1,6 @@
 from binary_reader import BinaryReader
 import argparse
 import json
-import sys
 import os
 
 def export_to_json(input_file, output_file):

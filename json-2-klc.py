@@ -1,7 +1,6 @@
 from binary_reader import BinaryReader
 import argparse
 import json
-import sys
 import os
 
 def export_to_json(input_file, output_file):
@@ -18,7 +17,6 @@ def export_to_json(input_file, output_file):
     klc.write_uint32(data['Header']['Lyric count'])
 
     # NOTES
-    lyric_list = []
     i = 0
     while i < len(data['Lyrics']):
         lyric = data['Lyrics'][i]
