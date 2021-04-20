@@ -38,6 +38,7 @@ def export_to_json(input_file, output_file):
     i = 1
     while i <= data['Header']['Number of notes']:
         note = {}
+        note['Index'] = i
         note['Button type'] = get_button_type(wtfl.read_uint32())
         note['Position'] = wtfl.read_float()
         note_list.append(note)
