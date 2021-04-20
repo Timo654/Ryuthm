@@ -39,12 +39,8 @@ def import_to_wtfl(input_file, output_file):
         wtfl.write_float(note['Position'])
         i += 1
 
-
     with open(output_file, 'wb') as f:
         f.write(wtfl.buffer())
-
-
-
 
 def load_file(input_file):
     output_file = f'{input_file}.wtfl'
