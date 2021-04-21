@@ -1,75 +1,76 @@
-from binary_reader import BinaryReader
 import argparse
 import json
-import sys
 import os
+from binary_reader import BinaryReader
+
 
 def get_button_type(button, version):
-    if button == 'Circle':
+    if button == 'circle':
         return 0
-    elif button == 'Cross':
+    elif button == 'cross':
         return 1
-    elif version > 2: #Ishin and Yakuza 0
-        if button == 'Triangle':
+    elif version > 2:  # Ishin and Yakuza 0
+        if button == 'triangle':
             return 2
-        elif button == 'Square':
+        elif button == 'square':
             return 3
-        elif button == 'Right':
+        elif button == 'right':
             return 4
-        elif button == 'Down':
+        elif button == 'down':
             return 5
-        elif button == 'Up':
+        elif button == 'up':
             return 6
-        elif button == 'Left':
+        elif button == 'left':
             return 7
-        elif button == 'Countdown':
+        elif button == 'countdown':
             return 8
-        elif button == 'Unk1':
+        elif button == 'unk1':
             return 9
-        elif button == 'Unk2':
+        elif button == 'unk2':
             return 10
-        elif button == 'End':
+        elif button == 'end':
             return 11
         else:
             print(f'Invalid button {button}!')
             raise ValueError
-    else: #Yakuza 5
-        if button == 'Square':
+    else:  # Yakuza 5
+        if button == 'square':
             return 2
-        elif button == 'Triangle':
+        elif button == 'triangle':
             return 3
-        elif button == 'Bomb':
+        elif button == 'bomb':
             return 4
-        elif button == 'Up':
+        elif button == 'up':
             return 9
-        elif button == 'Down':
+        elif button == 'down':
             return 10
-        elif button == 'Right':
+        elif button == 'right':
             return 11
-        elif button == 'Left':
+        elif button == 'left':
             return 12
         else:
             print(f'Invalid button {button}!')
             raise ValueError
+
 
 def convert_to_pos(ms):
     if ms != 0:
         return int(ms * 3)
     else:
         return 0
-        
+
+
 def write_pos(lbd, content, ms_mode):
     if ms_mode:
         lbd.write_uint32(convert_to_pos(content))
     else:
         lbd.write_uint32(content)
 
-def import_to_kbd(input_file, output_file):
+
+def import_to_lbd(input_file, output_file):
     with open(input_file) as f:
         data = json.loads(f.read())
-
-    lbd = BinaryReader(bytearray())
-    lbd.set_endian(True)
+    lbd = BinaryReader(bytearray(), True)
 
     # HEADER
     lbd.write_uint16(data['Header']['Version'])
@@ -96,7 +97,7 @@ def import_to_kbd(input_file, output_file):
         lbd.write_uint32(0)
         lbd.write_uint32(0)
         lbd.write_uint32(0)
-    
+
     # NOTES
     i = 0
     while i < len(data['Notes']):
@@ -104,29 +105,32 @@ def import_to_kbd(input_file, output_file):
         lbd.write_uint8(note['Unknown 2'])
         lbd.write_uint8(note['Line'])
         lbd.write_uint8(note['Unknown 3'])
-        lbd.write_uint8(get_button_type(note['Button type'], data['Header']['Version']))
-        write_pos(lbd, note['Start position'], ms_mode)
-        write_pos(lbd, note['End position'], ms_mode)
+        lbd.write_uint8(get_button_type(
+            note['Input type'].lower(), data['Header']['Version']))
+        write_pos(lbd, note['Start timing'], ms_mode)
+        write_pos(lbd, note['End timing'], ms_mode)
 
         if data['Header']['Version'] > 3:
             lbd.write_uint32(note['Grid position'])
         i += 1
 
-
     if data['Header']['Climax heat']:
         write_pos(lbd, data['Header']['Costume Switch Start'], ms_mode)
         write_pos(lbd, data['Header']['Costume Switch End'], ms_mode)
-    
+
     with open(output_file, 'wb') as f:
         f.write(lbd.buffer())
 
+
 def load_file(input_file):
     output_file = f'{input_file}.lbd'
-    import_to_kbd(input_file, output_file)
+    import_to_lbd(input_file, output_file)
+
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("input",  help='Input file (.lbd)', type=str, nargs='+')
+    parser.add_argument("input",  help='Input file (.lbd)',
+                        type=str, nargs='+')
     args = parser.parse_args()
 
     input_files = args.input
@@ -136,7 +140,6 @@ def main():
         file_count += 1
     print(f'{file_count} file(s) converted.')
     os.system('pause')
-
 
 
 if __name__ == "__main__":

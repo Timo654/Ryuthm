@@ -1,7 +1,40 @@
-from binary_reader import BinaryReader
 import argparse
 import json
 import os
+from binary_reader import BinaryReader
+
+
+def get_note_type(note):
+    if note == 0:
+        return 'Regular'
+    elif note == 1:
+        return 'Rapid'
+    elif note == 2:
+        return 'Hold'
+    else:
+        print(f'Unknown note {note}')
+        return f'Unknown note {note}'
+
+
+def get_button_type(button):
+    if button == 0:
+        return 'Cross'
+    elif button == 1:
+        return 'Circle'
+    elif button == 2:
+        return 'Square'
+    elif button == 3:
+        return 'Triangle'
+    elif button == 4:
+        return 'Left Arrow'
+    elif button == 5:
+        return 'Right Arrow'
+    elif button == 7:
+        return 'Black circle'  # ???
+    else:
+        print(f'Unknown button {button}')
+        return f'Unknown button {button}'
+
 
 def get_notes(kar, pointer, note_count, prev_pos):
     note_list = []
@@ -10,10 +43,10 @@ def get_notes(kar, pointer, note_count, prev_pos):
     while i <= note_count:
         note = {}
         note['Index'] = i
-        note['Note type'] = kar.read_uint32()
+        note['Note type'] = get_note_type(kar.read_uint32())
         note['Note position'] = kar.read_float()
         note['Unknown 14'] = kar.read_uint32()
-        note['Button type'] = kar.read_uint32()
+        note['Button type'] = get_button_type(kar.read_uint32())
         note['Unknown 15'] = kar.read_uint32()
         note['Cuesheet ID'] = hex(kar.read_uint16())
         note['Cue ID'] = kar.read_uint16()
@@ -22,6 +55,7 @@ def get_notes(kar, pointer, note_count, prev_pos):
         i += 1
     kar.seek(prev_pos)
     return note_list
+
 
 def get_settings(kar, pointer, prev_pos):
     settings = {}
@@ -32,11 +66,13 @@ def get_settings(kar, pointer, prev_pos):
     kar.seek(prev_pos)
     return settings
 
+
 def get_texture_name(kar, pointer, prev_pos):
     kar.seek(pointer)
     texture_name = kar.read_str()
     kar.seek(prev_pos)
     return texture_name
+
 
 def get_game(content):
     if content == 0:
@@ -44,9 +80,9 @@ def get_game(content):
     else:
         return 'Yakuza 4'
 
+
 def export_to_json(input_file, output_file):
     file = open(input_file, 'rb')
-
     kar = BinaryReader(file.read(), True)
     file.close()
 
@@ -97,26 +133,27 @@ def export_to_json(input_file, output_file):
         line['Note count'] = kar.read_uint32()
         notecount_pos = kar.pos()
 
-        line['Notes'] = get_notes(kar, note_section_pointer, line['Note count'], notecount_pos)
-        
+        line['Notes'] = get_notes(
+            kar, note_section_pointer, line['Note count'], notecount_pos)
+
         line_settings_pointer = kar.read_uint32()
 
         line_settings_pos = kar.pos()
 
-        line['Settings'] = get_settings(kar, line_settings_pointer, line_settings_pos)
+        line['Settings'] = get_settings(
+            kar, line_settings_pointer, line_settings_pos)
 
         line['Unknown 13'] = kar.read_uint32()
-        texture_name_pointer = kar.read_uint32() #TODO - go to texture name
+        texture_name_pointer = kar.read_uint32()
         tex_name_pos = kar.pos()
-        line['Texture name'] = get_texture_name(kar, texture_name_pointer, tex_name_pos)
+        line['Texture name'] = get_texture_name(
+            kar, texture_name_pointer, tex_name_pos)
 
         line['Texture length?'] = kar.read_uint32()
         line['Line spawn'] = kar.read_uint32()
         line['Line despawn'] = kar.read_uint32()
-        if i < data['Header']['Number of lines']: #doesn't exist for last note
-            line['Line page'] = kar.read_uint32()   
-
-
+        if i < data['Header']['Number of lines']:  # doesn't exist for last note
+            line['Line page'] = kar.read_uint32()
 
         line_list.append(line)
         i += 1
@@ -131,9 +168,11 @@ def load_file(input_file):
     output_file = f'{input_file}.json'
     export_to_json(input_file, output_file)
 
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("input",  help='Input file (.bin)', type=str, nargs='+')
+    parser.add_argument("input",  help='Input file (.bin)',
+                        type=str, nargs='+')
     args = parser.parse_args()
 
     input_files = args.input

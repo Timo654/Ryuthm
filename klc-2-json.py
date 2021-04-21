@@ -1,11 +1,11 @@
-from binary_reader import BinaryReader
 import argparse
 import json
 import os
+from binary_reader import BinaryReader
+
 
 def export_to_json(input_file, output_file):
     file = open(input_file, 'rb')
-
     klc = BinaryReader(file.read())
     file.close()
 
@@ -37,13 +37,16 @@ def export_to_json(input_file, output_file):
     with open(output_file, 'w') as fp:
         json.dump(data, fp, indent=2)
 
+
 def load_file(input_file):
     output_file = f'{input_file}.json'
     export_to_json(input_file, output_file)
 
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("input",  help='Input file (.klc)', type=str, nargs='+')
+    parser.add_argument("input",  help='Input file (.klc)',
+                        type=str, nargs='+')
     args = parser.parse_args()
 
     input_files = args.input
@@ -54,6 +57,7 @@ def main():
         file_count += 1
     print(f'{file_count} file(s) converted.')
     os.system('pause')
+
 
 if __name__ == "__main__":
     main()

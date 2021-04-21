@@ -1,15 +1,15 @@
-from binary_reader import BinaryReader
 import argparse
 import json
-import sys
 import os
+from binary_reader import BinaryReader
+
 
 def get_button_type(button, version):
     if button == 0:
         return 'Circle'
     elif button == 1:
         return 'Cross'
-    elif version > 2: #Ishin and Yakuza 0
+    elif version > 2:  # Ishin and Yakuza 0
         if button == 2:
             return 'Triangle'
         elif button == 3:
@@ -33,7 +33,7 @@ def get_button_type(button, version):
         else:
             print(f'{button}')
             return f'Unknown button {button}'
-    else: #Yakuza 5
+    else:  # Yakuza 5
         if button == 2:
             return 'Square'
         elif button == 3:
@@ -52,27 +52,27 @@ def get_button_type(button, version):
             print(f'{button}')
             return f'Unknown button {button}'
 
+
 def convert_to_ms(position):
     if position != 0:
         return position / 3
     else:
         return 0
-        
+
+
 def read_pos(lbd, ms_mode):
     if ms_mode:
         return convert_to_ms(lbd.read_uint32())
     else:
         return lbd.read_uint32()
 
+
 def export_to_json(input_file, output_file, ms_mode):
     file = open(input_file, 'rb')
-
-    lbd = BinaryReader(file.read())
+    lbd = BinaryReader(file.read(), True)
     file.close()
-    lbd.set_endian(True)
 
     data = {}
-
     # HEADER
     data['Header'] = {}
     data['Header']['Version'] = lbd.read_uint16()
@@ -96,21 +96,22 @@ def export_to_json(input_file, output_file, ms_mode):
         data['Header']['Hit Range (After)'] = read_pos(lbd, ms_mode)
 
     if data['Header']['Version'] > 3:
-        lbd.seek(12, 1) #padding
-    
+        lbd.seek(12, 1)  # padding
+
     # NOTES
     note_list = []
     i = 1
     while i <= data['Header']['Number of notes']:
         note = {}
         note['Index'] = i
-        
+
         note['Unknown 2'] = lbd.read_uint8()
         note['Line'] = lbd.read_uint8()
         note['Unknown 3'] = lbd.read_uint8()
-        note['Button type'] = get_button_type(lbd.read_uint8(), data['Header']['Version'])
-        note['Start position'] = read_pos(lbd, ms_mode)
-        note['End position'] = read_pos(lbd, ms_mode)
+        note['Input type'] = get_button_type(
+            lbd.read_uint8(), data['Header']['Version'])
+        note['Start timing'] = read_pos(lbd, ms_mode)
+        note['End timing'] = read_pos(lbd, ms_mode)
 
         if data['Header']['Version'] > 3:
             note['Grid position'] = lbd.read_uint32()
@@ -122,18 +123,22 @@ def export_to_json(input_file, output_file, ms_mode):
     if data['Header']['Climax heat']:
         data['Header']['Costume Switch Start'] = read_pos(lbd, ms_mode)
         data['Header']['Costume Switch End'] = read_pos(lbd, ms_mode)
-    
+
     with open(output_file, 'w') as fp:
         json.dump(data, fp, indent=2)
+
 
 def load_file(input_file, ms_mode):
     output_file = f'{input_file}.json'
     export_to_json(input_file, output_file, ms_mode)
 
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("input",  help='Input file (.lbd)', type=str, nargs='+')
-    parser.add_argument("-noms,", "--nomilliseconds", help="Doesn't convert position to milliseconds", nargs='?', const=1, type=int)
+    parser.add_argument("input",  help='Input file (.lbd)',
+                        type=str, nargs='+')
+    parser.add_argument("-noms,", "--nomilliseconds",
+                        help="Doesn't convert position to milliseconds", nargs='?', const=1, type=int)
     args = parser.parse_args()
 
     input_files = args.input

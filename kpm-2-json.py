@@ -1,11 +1,11 @@
-from binary_reader import BinaryReader
 import argparse
 import json
 import os
+from binary_reader import BinaryReader
+
 
 def export_to_json(input_file, output_file):
     file = open(input_file, 'rb')
-
     kpm = BinaryReader(file.read())
     file.close()
 
@@ -13,7 +13,8 @@ def export_to_json(input_file, output_file):
     # HEADER
     data['Header'] = {}
     data['Header']['Magic'] = kpm.read_str(4)
-    kpm.seek(8, 1)
+    kpm.seek(4, 1)
+    data['Header']['Version'] = kpm.read_uint32()
     data['Header']['File size w/o header'] = kpm.read_uint32()
     data['Header']['Parameter count'] = kpm.read_uint32()
 
@@ -33,6 +34,8 @@ def export_to_json(input_file, output_file):
         param['Good Rapid press'] = kpm.read_uint32()
         param['Scale'] = kpm.read_float()
         param['Cutscene start time'] = kpm.read_float()
+        if data['Header']['Version'] > 0:
+            param['Unknown 1'] = kpm.read_float()
         param_list.append(param)
         i += 1
 
@@ -41,13 +44,16 @@ def export_to_json(input_file, output_file):
     with open(output_file, 'w') as fp:
         json.dump(data, fp, indent=2)
 
+
 def load_file(input_file):
     output_file = f'{input_file}.json'
     export_to_json(input_file, output_file)
 
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("input",  help='Input file (.kpm)', type=str, nargs='+')
+    parser.add_argument("input",  help='Input file (.kpm)',
+                        type=str, nargs='+')
     args = parser.parse_args()
 
     input_files = args.input

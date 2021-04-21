@@ -1,33 +1,32 @@
-from binary_reader import BinaryReader
 import argparse
 import json
-import sys
 import os
+from binary_reader import BinaryReader
+
 
 def get_button_type(button):
-    if button == 'Cross':
+    if button == 'cross':
         return 0
-    elif button == 'Circle':
+    elif button == 'circle':
         return 1
-    elif button == 'Square':
+    elif button == 'square':
         return 2
-    elif button == 'Triangle':
+    elif button == 'triangle':
         return 3
-        
+
+
 def import_to_wtfl(input_file, output_file):
     with open(input_file) as f:
         data = json.loads(f.read())
-
     wtfl = BinaryReader(bytearray(), True)
 
-
     # HEADER
-    wtfl.write_str(data['Header']['Magic'])
-    wtfl.write_uint16(int(data['Header']['Endian check'], 16))
-    wtfl.write_uint8(len(data['Notes']))
+    wtfl.write_str('LFTW')  # magic
+    wtfl.write_uint16(0x201)  # endian check
+    wtfl.write_uint8(len(data['Notes']))  # note count
     wtfl.write_uint8(data['Header']['Unknown 1'])
     wtfl.write_uint32(int(data['Header']['Version'], 16))
-    wtfl.write_uint32(0)
+    wtfl.write_uint32(0)  # padding
     if int(data['Header']['Version'], 16) > 0x1000000:
         wtfl.write_str(data['Header']['Stage'])
 
@@ -35,20 +34,23 @@ def import_to_wtfl(input_file, output_file):
     i = 0
     while i < len(data['Notes']):
         note = data['Notes'][i]
-        wtfl.write_uint32(get_button_type(note['Button type']))
+        wtfl.write_uint32(get_button_type(note['Button type'].lower()))
         wtfl.write_float(note['Position'])
         i += 1
 
     with open(output_file, 'wb') as f:
         f.write(wtfl.buffer())
 
+
 def load_file(input_file):
     output_file = f'{input_file}.wtfl'
     import_to_wtfl(input_file, output_file)
 
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("input",  help='Input file (.wtfl)', type=str, nargs='+')
+    parser.add_argument("input",  help='Input file (.wtfl)',
+                        type=str, nargs='+')
     args = parser.parse_args()
 
     input_files = args.input

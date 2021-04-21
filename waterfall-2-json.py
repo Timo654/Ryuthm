@@ -1,8 +1,8 @@
-from binary_reader import BinaryReader
 import argparse
 import json
-import sys
 import os
+from binary_reader import BinaryReader
+
 
 def get_button_type(button):
     if button == 0:
@@ -13,15 +13,14 @@ def get_button_type(button):
         return 'Square'
     elif button == 3:
         return 'Triangle'
-        
+
+
 def export_to_json(input_file, output_file):
     file = open(input_file, 'rb')
-
     wtfl = BinaryReader(file.read(), True)
     file.close()
 
     data = {}
-
     # HEADER
     data['Header'] = {}
     data['Header']['Magic'] = wtfl.read_str(4)
@@ -50,15 +49,15 @@ def export_to_json(input_file, output_file):
         json.dump(data, fp, indent=2)
 
 
-
-
 def load_file(input_file):
     output_file = f'{input_file}.json'
     export_to_json(input_file, output_file)
 
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("input",  help='Input file (.wtfl)', type=str, nargs='+')
+    parser.add_argument("input",  help='Input file (.wtfl)',
+                        type=str, nargs='+')
     args = parser.parse_args()
 
     input_files = args.input
