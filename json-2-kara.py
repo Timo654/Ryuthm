@@ -130,8 +130,8 @@ def import_to_kara(input_file, output_file):
         while o < len(data['Lines'][i]['Notes']):
             note = data['Lines'][i]['Notes'][o]
             kar.write_uint32(get_note_type(note['Note type'].lower()))
-            kar.write_float(note['Note position'])
-            kar.write_float(note['Unknown 16'])
+            kar.write_float(note['Start position'])
+            kar.write_float(note['End position'])
             kar.write_uint32(get_button_type(note['Button type'].lower()))
             kar.write_uint32(note['Unknown 17'])
             kar.write_uint16(int(note['Cuesheet ID'], 16))
