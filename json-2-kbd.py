@@ -29,6 +29,18 @@ def get_note_type(note):
         print(f'Invalid note {note}!')
         raise ValueError
 
+def convert_to_pos(ms):
+    if ms != 0:
+        return int(ms * 3)
+    else:
+        return 0
+
+
+def write_pos(kbd, content, ms_mode):
+    if ms_mode:
+        kbd.write_uint32(convert_to_pos(content))
+    else:
+        kbd.write_uint32(content)
 
 def import_to_kbd(input_file, output_file):
     with open(input_file) as f:
@@ -46,14 +58,15 @@ def import_to_kbd(input_file, output_file):
     kbd.write_uint32(0)  # max score
     if data['Header']['Version'] > 1:
         kbd.write_uint32(data['Header']['Unknown 1'])
+    ms_mode = data['Header']['Converted to milliseconds']
 
     # NOTES
     i = 0
     max_score = 0
     while i < len(data['Notes']):
         note = data['Notes'][i]
-        kbd.write_uint32(note['Start position'])
-        kbd.write_uint32(note['End position'])
+        write_pos(kbd, note['Start position'], ms_mode)
+        write_pos(kbd, note['End position'], ms_mode)
         kbd.write_uint32(note['Vertical position'])
         kbd.write_uint32(0)
         kbd.write_uint32(get_button_type(note['Button type']))
