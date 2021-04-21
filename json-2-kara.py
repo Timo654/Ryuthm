@@ -101,7 +101,7 @@ def import_to_kara(input_file, output_file):
         kar.write_uint32(0)  # texture name pointer
         texture_pnt_pos_list.append(texture_pnt_pos)
 
-        kar.write_uint32(line['Texture length?'])
+        kar.write_uint32(line['Unknown 14'])
         kar.write_uint32(line['Line spawn'])
         kar.write_uint32(line['Line despawn'])
         if i < data['Header']['Number of lines'] - 1:  # last line doesnt have it
@@ -131,12 +131,12 @@ def import_to_kara(input_file, output_file):
             note = data['Lines'][i]['Notes'][o]
             kar.write_uint32(get_note_type(note['Note type'].lower()))
             kar.write_float(note['Note position'])
-            kar.write_float(note['Unknown 14'])
+            kar.write_float(note['Unknown 15'])
             kar.write_uint32(get_button_type(note['Button type'].lower()))
-            kar.write_uint32(note['Unknown 15'])
+            kar.write_uint32(note['Unknown 16'])
             kar.write_uint16(int(note['Cuesheet ID'], 16))
             kar.write_uint16(note['Cue ID'])
-            kar.write_uint32(note['Unknown 16'])
+            kar.write_uint32(note['Unknown 17'])
             o += 1
 
         texture_pos = kar.pos()
