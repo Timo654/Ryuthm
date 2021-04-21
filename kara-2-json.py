@@ -45,7 +45,7 @@ def get_notes(kar, pointer, note_count, prev_pos):
         note['Index'] = i
         note['Note type'] = get_note_type(kar.read_uint32())
         note['Note position'] = kar.read_float()
-        note['Unknown 14'] = kar.read_uint32()
+        note['Unknown 14'] = kar.read_float()
         note['Button type'] = get_button_type(kar.read_uint32())
         note['Unknown 15'] = kar.read_uint32()
         note['Cuesheet ID'] = hex(kar.read_uint16())
