@@ -45,12 +45,12 @@ def get_notes(kar, pointer, note_count, prev_pos):
         note['Index'] = i
         note['Note type'] = get_note_type(kar.read_uint32())
         note['Note position'] = kar.read_float()
-        note['Unknown 15'] = kar.read_float()
+        note['Unknown 16'] = kar.read_float()
         note['Button type'] = get_button_type(kar.read_uint32())
-        note['Unknown 16'] = kar.read_uint32()
+        note['Unknown 17'] = kar.read_uint32()
         note['Cuesheet ID'] = hex(kar.read_uint16())
         note['Cue ID'] = kar.read_uint16()
-        note['Unknown 17'] = kar.read_uint32()
+        note['Unknown 18'] = kar.read_uint32()
         note_list.append(note)
         i += 1
     kar.seek(prev_pos)
@@ -120,7 +120,7 @@ def export_to_json(input_file, output_file):
     data['Main table']['Unknown 12'] = kar.read_uint32()
     data['Main table']['Great range'] = kar.read_float()
     data['Main table']['Good range'] = kar.read_float()
-    kar.seek(4, 1)
+    data['Main table']['Unknown 13'] = kar.read_uint32()
 
     # LINES
     line_list = []
@@ -143,13 +143,13 @@ def export_to_json(input_file, output_file):
         line['Settings'] = get_settings(
             kar, line_settings_pointer, line_settings_pos)
 
-        line['Unknown 13'] = kar.read_uint32()
+        line['Unknown 14'] = kar.read_uint32()
         texture_name_pointer = kar.read_uint32()
         tex_name_pos = kar.pos()
         line['Texture name'] = get_texture_name(
             kar, texture_name_pointer, tex_name_pos)
 
-        line['Unknown 14'] = kar.read_uint32()
+        line['Unknown 15'] = kar.read_uint32()
         line['Line spawn'] = kar.read_uint32()
         line['Line despawn'] = kar.read_uint32()
         if i < data['Header']['Number of lines']:  # doesn't exist for last note
