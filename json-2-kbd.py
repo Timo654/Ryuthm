@@ -57,7 +57,7 @@ def import_to_kbd(input_file, output_file):
     score_pos = kbd.pos()
     kbd.write_uint32(0)  # max score
     if data['Header']['Version'] > 1:
-        kbd.write_uint32(data['Header']['Unknown 1'])
+        kbd.write_uint32(data['Header']['Max score pre-cutscene'])
     ms_mode = data['Header']['Converted to milliseconds']
 
     # NOTES

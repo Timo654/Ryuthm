@@ -56,7 +56,7 @@ def export_to_json(input_file, output_file, ms_mode):
     data['Header']['Note count'] = kbd.read_uint32()
     data['Header']['Max score'] = kbd.read_uint32()
     if data['Header']['Version'] > 1:
-        data['Header']['Unknown 1'] = kbd.read_uint32()
+        data['Header']['Max score pre-cutscene'] = kbd.read_uint32()
 
     # NOTES
     note_list = []
