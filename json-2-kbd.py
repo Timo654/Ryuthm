@@ -64,7 +64,8 @@ def import_to_kbd(input_file, output_file, cutscene_start):
     i = 0
     max_score = 0
     max_cutscene_score = 0
-    cutscene_start = cutscene_start * 1000
+    if cutscene_start:
+        cutscene_start = cutscene_start * 1000 # convert to milliseconds
     while i < len(data['Notes']):
         note = data['Notes'][i]
         write_pos(kbd, note['Start position'], ms_mode)
