@@ -42,7 +42,7 @@ def write_pos(kbd, content, ms_mode):
     else:
         kbd.write_uint32(content)
 
-def import_to_kbd(input_file, output_file):
+def import_to_kbd(input_file, output_file, cutscene_start):
     with open(input_file) as f:
         data = json.loads(f.read())
     kbd = BinaryReader(bytearray())
@@ -57,12 +57,15 @@ def import_to_kbd(input_file, output_file):
     score_pos = kbd.pos()
     kbd.write_uint32(0)  # max score
     if data['Header']['Version'] > 1:
-        kbd.write_uint32(data['Header']['Max score pre-cutscene'])
+        if not cutscene_start:
+            kbd.write_uint32(data['Header']['Max score pre-cutscene'])
     ms_mode = data['Header']['Converted to milliseconds']
 
     # NOTES
     i = 0
     max_score = 0
+    max_cutscene_score = 0
+    cutscene_start = cutscene_start * 1000
     while i < len(data['Notes']):
         note = data['Notes'][i]
         write_pos(kbd, note['Start position'], ms_mode)
@@ -81,6 +84,10 @@ def import_to_kbd(input_file, output_file):
         kbd.write_uint16(note['Cue ID'])
         kbd.write_uint16(note['Cuesheet ID'])
         kbd.write_uint32(0)
+
+        if cutscene_start:
+            if cutscene_start > note['Start position']:
+                max_cutscene_score = max_score
         i += 1
 
     kbd.seek(size_pos)
@@ -93,26 +100,36 @@ def import_to_kbd(input_file, output_file):
     kbd.write_uint32(kbd.size() - header_size)
     kbd.seek(score_pos)
     kbd.write_uint32(max_score)
+    if cutscene_start:
+        kbd.write_uint32(max_cutscene_score)
 
     with open(output_file, 'wb') as f:
         f.write(kbd.buffer())
 
 
-def load_file(input_file):
+def load_file(input_file, cutscene_start):
     output_file = f'{input_file}.kbd'
-    import_to_kbd(input_file, output_file)
+    import_to_kbd(input_file, output_file, cutscene_start)
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("input",  help='Input file (.kbd)',
                         type=str, nargs='+')
+
+    parser.add_argument("-css,", "--cutscenestart",
+                        help="Calculates cutscene score using the cutscene start timing (seconds).", nargs='?', const=1, type=float)
     args = parser.parse_args()
+
+    if args.cutscenestart:
+        cutscene_start = args.cutscenestart
+    else:
+        cutscene_start = None
 
     input_files = args.input
     file_count = 0
     for file in input_files:
-        load_file(file)
+        load_file(file, cutscene_start)
         file_count += 1
     print(f'{file_count} file(s) converted.')
     os.system('pause')
