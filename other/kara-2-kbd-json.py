@@ -44,7 +44,7 @@ def import_to_kara(input_file, output_file):
 
         
 
-            max_percent = data['Lines'][i]['Settings']['Max notes'] / 24 
+            max_percent = data['Lines'][i]['Settings']['Line length'] / 24 
             start_pos =  note['Start position'] / max_percent
             end_pos = note['End position'] / max_percent
 
