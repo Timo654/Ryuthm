@@ -119,7 +119,7 @@ def import_to_kara(input_file, output_file):
         settings = data['Lines'][i]['Settings']
         settings_pos = kar.pos()
         new_settings_pnt_list.append(settings_pos)
-        kar.write_uint32(settings['Max notes'])
+        kar.write_uint32(settings['Line length']) # 24 = 1.0
         kar.write_uint32(settings['Line start time (ms)'])
         kar.write_uint32(settings['Line end time (ms)'])
         # note settings

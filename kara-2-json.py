@@ -60,7 +60,7 @@ def get_notes(kar, pointer, note_count, prev_pos):
 def get_settings(kar, pointer, prev_pos):
     settings = {}
     kar.seek(pointer)
-    settings['Max notes'] = kar.read_uint32()
+    settings['Line length'] = kar.read_uint32()
     settings['Line start time (ms)'] = kar.read_uint32()
     settings['Line end time (ms)'] = kar.read_uint32()
     kar.seek(prev_pos)
