@@ -69,7 +69,7 @@ def load_file(input_file):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("input",  help='Input file (.bin)',
+    parser.add_argument("input",  help='Input file (.lbd.json)',
                         type=str, nargs='+')
     args = parser.parse_args()
 
