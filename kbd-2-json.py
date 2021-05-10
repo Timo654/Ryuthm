@@ -51,7 +51,7 @@ def export_to_json(input_file, output_file, ms_mode):
     data['Header']['Magic'] = kbd.read_str(4)
     kbd.seek(4, 1)
     data['Header']['Version'] = kbd.read_uint32()
-    data['Header']['Size w/o header'] = kbd.read_uint32()
+    kbd.seek(4, 1) #size w/o header
     data['Header']['Converted to milliseconds'] = ms_mode
     data['Header']['Note count'] = kbd.read_uint32()
     data['Header']['Max score'] = kbd.read_uint32()

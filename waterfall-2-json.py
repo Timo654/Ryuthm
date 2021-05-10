@@ -24,7 +24,7 @@ def export_to_json(input_file, output_file):
     # HEADER
     data['Header'] = {}
     data['Header']['Magic'] = wtfl.read_str(4)
-    data['Header']['Endian check'] = hex(wtfl.read_uint16())
+    wtfl.seek(4, 1) #endian check
     data['Header']['Number of notes'] = wtfl.read_uint8()
     data['Header']['Unknown 1'] = wtfl.read_uint8()
     data['Header']['Version'] = hex(wtfl.read_uint32())

@@ -79,7 +79,7 @@ def export_to_json(input_file, output_file):
     # HEADER
     data['Header'] = {}
     data['Header']['Magic'] = kar.read_str(4)
-    data['Header']['Endian identifier'] = hex(kar.read_uint16())
+    kar.seek(2, 1) #endian identifier
     data['Header']['Game'] = get_game(kar.read_uint16())
     if data['Header']['Game'] == 'Yakuza 4':
         kar.seek(6)

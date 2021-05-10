@@ -15,7 +15,7 @@ def export_to_json(input_file, output_file):
     data['Header']['Magic'] = kpm.read_str(4)
     kpm.seek(4, 1)
     data['Header']['Version'] = kpm.read_uint32()
-    data['Header']['File size w/o header'] = kpm.read_uint32()
+    kpm.seek(4, 1) #size w/o header
     data['Header']['Parameter count'] = kpm.read_uint32()
 
     # PARAMS
