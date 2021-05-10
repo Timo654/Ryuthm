@@ -12,7 +12,19 @@ def get_line(button):
         return 4
     elif button == 'Cross':
         return 6
+    elif button == 'Left Arrow':
+        return 2
+    elif button == 'Right Arrow':
+        return 4
 
+def get_button(button):
+    if button == 'Left Arrow':
+        return 'Circle'
+    elif button == 'Right Arrow':
+        return 'Square'
+    else:
+        return button
+    
 def import_to_kara(input_file, output_file):
     with open(input_file) as f:
         data = json.loads(f.read())
@@ -74,7 +86,7 @@ def import_to_kara(input_file, output_file):
         newnote['Start position'] = note_s_pos_list[i]
         newnote['End position'] = note_e_pos_list[i]
         newnote['Vertical position'] = get_line(button_type_list[i])
-        newnote['Button type'] = button_type_list[i]
+        newnote['Button type'] = get_button(button_type_list[i])
         newnote['Note type'] = note_type_list[i]
         newnote['Cue ID'] = 0
         newnote['Cuesheet ID'] = 0
