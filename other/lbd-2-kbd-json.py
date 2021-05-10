@@ -28,7 +28,6 @@ def import_to_kara(input_file, output_file):
     kbd['Header'] = {}
     kbd['Header']['Magic'] = "NTBK"
     kbd['Header']['Version'] = 2
-    kbd['Header']['Size w/o header'] = 0
     kbd['Header']['Converted to milliseconds'] = True
     kbd['Header']['Note count'] = 0
     kbd['Header']['Max score'] = 0
