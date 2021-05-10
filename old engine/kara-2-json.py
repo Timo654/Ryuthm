@@ -36,7 +36,7 @@ def get_button_type(button):
         return f'Unknown button {button}'
 
 
-def get_notes(kar, note_count):
+def get_notes(kar, note_count, game):
     note_list = []
     i = 1
     while i <= note_count:
@@ -49,7 +49,8 @@ def get_notes(kar, note_count):
         note['Unknown 17'] = kar.read_uint32()
         note['Cuesheet ID'] = hex(kar.read_uint16())
         note['Cue ID'] = kar.read_uint16()
-        note['Unknown 18'] = kar.read_uint32()
+        if game != 'Yakuza 3':
+            note['Unknown 18'] = kar.read_uint32()
         note_list.append(note)
         i += 1
     return note_list
@@ -70,7 +71,7 @@ def get_game(content):
         return 'Yakuza 4'
 
 
-def export_to_json(input_file, output_file):
+def export_to_json(input_file, output_file, y3_mode):
     file = open(input_file, 'rb')
     kar = BinaryReader(file.read(), True)
     file.close()
@@ -80,10 +81,13 @@ def export_to_json(input_file, output_file):
     data['Header'] = {}
     data['Header']['Magic'] = kar.read_str(4)
     kar.seek(2, 1) #endian identifier
-    with kar.seek_to(0, 1):
-        data['Header']['Game'] = get_game(kar.read_uint16())
-        
-    if data['Header']['Game'] == 'Yakuza 4':
+    if y3_mode:
+        data['Header']['Game'] = 'Yakuza 3'
+    else:
+        with kar.seek_to(0, 1):
+            data['Header']['Game'] = get_game(kar.read_uint16())
+            
+    if data['Header']['Game'] in ['Yakuza 3', 'Yakuza 4']:
         data['Header']['Number of lines'] = kar.read_uint8()
         data['Header']['Unknown 1'] = kar.read_uint8()
     else:
@@ -126,7 +130,7 @@ def export_to_json(input_file, output_file):
         line['Note count'] = kar.read_uint32()
 
         with kar.seek_to(note_section_pointer):
-            line['Notes'] = get_notes(kar, line['Note count'])
+            line['Notes'] = get_notes(kar, line['Note count'], data['Header']['Game'])
 
         line_settings_pointer = kar.read_uint32()
 
@@ -153,22 +157,29 @@ def export_to_json(input_file, output_file):
         json.dump(data, fp, indent=2)
 
 
-def load_file(input_file):
+def load_file(input_file, y3_mode):
     output_file = f'{input_file}.json'
-    export_to_json(input_file, output_file)
+    export_to_json(input_file, output_file, y3_mode)
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("input",  help='Input file (.bin)',
                         type=str, nargs='+')
+    parser.add_argument("-y3,", "--yakuza3",
+                        help="Yakuza 3 mode", nargs='?', const=1, type=int)
     args = parser.parse_args()
 
     input_files = args.input
 
+    if args.yakuza3:
+        y3_mode = True
+    else:
+        y3_mode = False
+
     file_count = 0
     for file in input_files:
-        load_file(file)
+        load_file(file, y3_mode)
         file_count += 1
     print(f'{file_count} file(s) converted.')
     os.system('pause')

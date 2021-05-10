@@ -44,7 +44,7 @@ def import_to_kara(input_file, output_file):
     # HEADER
     kar.write_str('KARA')  # magic
     kar.write_uint16(0x201)  # endian identifier
-    if data['Header']['Game'] == 'Yakuza 4':
+    if data['Header']['Game'] in ['Yakuza 3', 'Yakuza 4']:
         kar.write_uint8(len(data['Lines']))
         kar.write_uint8(data['Header']['Unknown 1'])
     else:
@@ -135,18 +135,18 @@ def import_to_kara(input_file, output_file):
             kar.write_uint32(note['Unknown 17'])
             kar.write_uint16(int(note['Cuesheet ID'], 16))
             kar.write_uint16(note['Cue ID'])
-            kar.write_uint32(note['Unknown 18'])
+            if data['Header']['Game'] != 'Yakuza 3':
+                kar.write_uint32(note['Unknown 18'])
             o += 1
 
         texture_pos = kar.pos()
         new_texture_pnt_list.append(texture_pos)
         kar.write_str(data['Lines'][i]['Texture name'])
         kar.align(0x4)
-
         if data['Lines'][i]['Texture name'] != "lyric_dmmy.dds":
             kar.write_uint32(0)
             kar.write_uint32(0)
-            if data['Header']['Game'] == 'Yakuza 4':
+            if data['Header']['Game'] in ['Yakuza 3', 'Yakuza 4']:
                 kar.write_uint32(0)
 
         i += 1
