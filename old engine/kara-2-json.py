@@ -80,12 +80,16 @@ def export_to_json(input_file, output_file):
     data['Header'] = {}
     data['Header']['Magic'] = kar.read_str(4)
     kar.seek(2, 1) #endian identifier
-    data['Header']['Game'] = get_game(kar.read_uint16())
+    with kar.seek_to(0, 1):
+        data['Header']['Game'] = get_game(kar.read_uint16())
+        
     if data['Header']['Game'] == 'Yakuza 4':
-        kar.seek(6)
         data['Header']['Number of lines'] = kar.read_uint8()
         data['Header']['Unknown 1'] = kar.read_uint8()
+    else:
+        kar.seek(2, 1)
     data['Header']['Version'] = kar.read_uint32()
+
     kar.seek(4, 1)
     if data['Header']['Game'] == 'Yakuza 5':
         data['Header']['Number of lines'] = kar.read_uint8()
