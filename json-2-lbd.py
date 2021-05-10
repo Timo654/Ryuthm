@@ -94,8 +94,7 @@ def import_to_lbd(input_file, output_file):
         write_pos(lbd, data['Header']['Hit Range (After)'], ms_mode)
 
     if data['Header']['Version'] > 3:
-        lbd.write_uint32(0)
-        lbd.write_uint32(0)
+        lbd.write_uint64(0)
         lbd.write_uint32(0)
 
     # NOTES

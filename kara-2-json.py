@@ -36,9 +36,8 @@ def get_button_type(button):
         return f'Unknown button {button}'
 
 
-def get_notes(kar, pointer, note_count, prev_pos):
+def get_notes(kar, note_count):
     note_list = []
-    kar.seek(pointer)
     i = 1
     while i <= note_count:
         note = {}
@@ -53,25 +52,15 @@ def get_notes(kar, pointer, note_count, prev_pos):
         note['Unknown 18'] = kar.read_uint32()
         note_list.append(note)
         i += 1
-    kar.seek(prev_pos)
     return note_list
 
 
-def get_settings(kar, pointer, prev_pos):
+def get_settings(kar):
     settings = {}
-    kar.seek(pointer)
     settings['Line length'] = kar.read_uint32()
     settings['Line start time (ms)'] = kar.read_uint32()
     settings['Line end time (ms)'] = kar.read_uint32()
-    kar.seek(prev_pos)
     return settings
-
-
-def get_texture_name(kar, pointer, prev_pos):
-    kar.seek(pointer)
-    texture_name = kar.read_str()
-    kar.seek(prev_pos)
-    return texture_name
 
 
 def get_game(content):
@@ -131,23 +120,19 @@ def export_to_json(input_file, output_file):
         line['Vertical position'] = kar.read_uint32()
         note_section_pointer = kar.read_uint32()
         line['Note count'] = kar.read_uint32()
-        notecount_pos = kar.pos()
 
-        line['Notes'] = get_notes(
-            kar, note_section_pointer, line['Note count'], notecount_pos)
+        with kar.seek_to(note_section_pointer):
+            line['Notes'] = get_notes(kar, line['Note count'])
 
         line_settings_pointer = kar.read_uint32()
 
-        line_settings_pos = kar.pos()
-
-        line['Settings'] = get_settings(
-            kar, line_settings_pointer, line_settings_pos)
+        with kar.seek_to(line_settings_pointer):
+            line['Settings'] = get_settings(kar)
 
         line['Unknown 14'] = kar.read_uint32()
         texture_name_pointer = kar.read_uint32()
-        tex_name_pos = kar.pos()
-        line['Texture name'] = get_texture_name(
-            kar, texture_name_pointer, tex_name_pos)
+        with kar.seek_to(texture_name_pointer):
+            line['Texture name'] = kar.read_str()
 
         line['Unknown 15'] = kar.read_uint32()
         line['Line spawn'] = kar.read_uint32()

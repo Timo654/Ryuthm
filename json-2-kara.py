@@ -55,8 +55,7 @@ def import_to_kara(input_file, output_file):
         kar.write_uint8(len(data['Lines']))
         kar.write_uint8(data['Header']['Unknown 1'])
         kar.write_uint16(0)
-        kar.write_uint32(0)
-        kar.write_uint32(0)
+        kar.write_uint64(0)
         kar.write_uint32(0)
 
     # MAIN TABLE

@@ -11,8 +11,7 @@ def import_to_klc(input_file, output_file):
 
     # HEADER
     klc.write_str('CRLK')  # magic
-    klc.write_uint32(0)
-    klc.write_uint32(0)
+    klc.write_uint64(0)
     klc.write_uint32(data['Header']['Unknown 1'])
     klc.write_uint32(len(data['Lyrics']))  # lyric count
 
