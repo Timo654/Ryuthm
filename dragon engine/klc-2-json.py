@@ -26,7 +26,7 @@ def export_to_json(input_file, output_file):
         lyric['Start timing'] = klc.read_float()
         lyric['End timing'] = klc.read_float()
         lyric['Appear timing'] = klc.read_float()
-        lyric['Timing timing'] = klc.read_float()
+        lyric['Disappear timing'] = klc.read_float()
         lyric['Vertical position'] = klc.read_uint32()
         klc.seek(4, 1)
         lyric_list.append(lyric)

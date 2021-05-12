@@ -22,7 +22,7 @@ def import_to_klc(input_file, output_file):
         klc.write_float(lyric['Start timing'])
         klc.write_float(lyric['End timing'])
         klc.write_float(lyric['Appear timing'])
-        klc.write_float(lyric['Timing timing'])
+        klc.write_float(lyric['Disappear timing'])
         klc.write_uint32(lyric['Vertical position'])
         klc.write_uint32(0)
         i += 1
