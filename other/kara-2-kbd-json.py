@@ -25,13 +25,12 @@ def get_button(button):
     else:
         return button
     
-def import_to_kara(input_file, output_file):
+def convert_to_kbd(input_file, output_file):
     with open(input_file) as f:
         data = json.loads(f.read())
     kbd = {}
 
     # HEADER
-    kbd['Header'] = {}
     kbd['Header'] = {}
     kbd['Header']['Magic'] = "NTBK"
     kbd['Header']['Version'] = 2
@@ -99,8 +98,8 @@ def import_to_kara(input_file, output_file):
 
 
 def load_file(input_file):
-    output_file = f'{input_file}.conv.json'
-    import_to_kara(input_file, output_file)
+    output_file = f'{input_file}.kbd.json'
+    convert_to_kbd(input_file, output_file)
 
 
 def main():

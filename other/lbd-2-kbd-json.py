@@ -45,7 +45,7 @@ def import_to_kara(input_file, output_file):
             newnote['Start position'] = oldnote['Start timing']
             newnote['End position'] = oldnote['End timing']
             newnote['Vertical position'] = get_line(oldnote['Input type'])
-            newnote['Button type'] = oldnote['Input type'] #fix bomb shit and other
+            newnote['Button type'] = oldnote['Input type']
             newnote['Note type'] = get_note_type(oldnote['End timing'])
             newnote['Cue ID'] = 0
             newnote['Cuesheet ID'] = 0
@@ -62,7 +62,7 @@ def import_to_kara(input_file, output_file):
 
 
 def load_file(input_file):
-    output_file = f'{input_file}.conv.json'
+    output_file = f'{input_file}.kbd.json'
     import_to_kara(input_file, output_file)
 
 
