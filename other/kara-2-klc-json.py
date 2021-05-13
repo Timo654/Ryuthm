@@ -33,7 +33,7 @@ def import_to_kara(input_file, output_file):
             lyric['Index'] = i + 1
             lyric['Start timing'] = convert_to_sec(line['Settings']['Line start time (ms)'])
             lyric['End timing'] = convert_to_sec(line['Settings']['Line end time (ms)'])
-            lyric['Appear timing'] = convert_to_sec(data['Lines'][i - 1]['Settings']['Line end time (ms)'])
+            lyric['Appear timing'] = convert_to_sec(line['Settings']['Line start time (ms)'])
             lyric['Disappear timing'] = convert_to_sec(line['Settings']['Line end time (ms)'])
             if prev_disappear != 0:
                 lyric['Vertical position'] = get_vert_pos(lyric['Appear timing'], prev_disappear)
