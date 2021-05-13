@@ -1,13 +1,13 @@
 import argparse
 import json
 import os
-from binary_reader import BinaryReader
 
 def convert_to_sec(value):
     return value / 1000
 
 def get_vert_pos(new_spawn, old_end):
     if old_end > new_spawn:
+        print(f'old_end {old_end} and new spawn {new_spawn}')
         return 1
     else:
         return 0 
@@ -25,19 +25,23 @@ def import_to_kara(input_file, output_file):
     
     i = 0
     lyrics_list = []
+    prev_disappear = 0
     while i < len(data['Lines']):
         lyric = {}
         line = data['Lines'][i]
-        lyric['Index'] = i + 1
-        lyric['Start timing'] = convert_to_sec(line['Settings']['Line start time (ms)'])
-        lyric['End timing'] = convert_to_sec(line['Settings']['Line end time (ms)'])
-        lyric['Appear timing'] = convert_to_sec(line['Line spawn'])
-        lyric['Disappear timing'] = convert_to_sec(line['Line despawn'])
-        if i > 0:
-            lyric['Vertical position'] = get_vert_pos(line['Line spawn'], data['Lines'][i - 1]['Line despawn'])
-        else:
-            lyric['Vertical position'] = 0
-        lyrics_list.append(lyric)
+        if line['Texture name'] != 'lyric_dmmy.dds':
+            lyric['Index'] = i + 1
+            lyric['Start timing'] = convert_to_sec(line['Settings']['Line start time (ms)'])
+            lyric['End timing'] = convert_to_sec(line['Settings']['Line end time (ms)'])
+            lyric['Appear timing'] = convert_to_sec(data['Lines'][i - 1]['Settings']['Line end time (ms)'])
+            lyric['Disappear timing'] = convert_to_sec(line['Settings']['Line end time (ms)'])
+            if prev_disappear != 0:
+                lyric['Vertical position'] = get_vert_pos(lyric['Appear timing'], prev_disappear)
+            else:
+                lyric['Vertical position'] = 0
+            lyric['KARA texture name'] = line['Texture name']
+            prev_disappear = lyric['Disappear timing']
+            lyrics_list.append(lyric)
         i += 1
         
     kbd['Lyrics'] = lyrics_list

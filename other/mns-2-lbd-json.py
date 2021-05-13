@@ -71,7 +71,7 @@ def sort_notes(note_list):
 
     return note_list
 
-def export_to_json(input_file, output_file):
+def convert_to_lbd(input_file, output_file):
     file = open(input_file, 'rb')
     mns = BinaryReader(file.read())
     file.close()
@@ -152,7 +152,7 @@ def load_file(input_file):
     try:
         if mns.read_str(4) == 'MNS':
             output_file = f'{input_file}.json'
-            export_to_json(input_file, output_file)
+            convert_to_lbd(input_file, output_file)
         else:
             print('Invalid magic, skipping file.')
             return False

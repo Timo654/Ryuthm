@@ -1,7 +1,6 @@
 import argparse
 import json
 import os
-from binary_reader import BinaryReader
 
 def get_line(button):
     if button == 'Triangle':
@@ -45,6 +44,8 @@ def convert_to_kbd(input_file, output_file):
     note_e_pos_list = []
     button_type_list = []
     note_type_list = []
+    cuesheet_list = []
+    cue_list = []
     
     i = 0
     while i < len(data['Lines']):
@@ -71,6 +72,8 @@ def convert_to_kbd(input_file, output_file):
             note_e_pos_list.append(actual_e_pos)
             button_type_list.append(note['Button type'])
             note_type_list.append(note['Note type'])
+            cuesheet_list.append(note['Cuesheet ID'])
+            cue_list.append(note['Cue ID'])
             o += 1
 
 
@@ -89,6 +92,8 @@ def convert_to_kbd(input_file, output_file):
         newnote['Note type'] = note_type_list[i]
         newnote['Cue ID'] = 0
         newnote['Cuesheet ID'] = 0
+        newnote['KARA Cue ID'] = cue_list[i]
+        newnote['KARA Cuesheet ID'] = cuesheet_list[i]
         notes_list.append(newnote)
 
         i += 1

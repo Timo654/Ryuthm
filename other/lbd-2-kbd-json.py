@@ -1,7 +1,6 @@
 import argparse
 import json
 import os
-from binary_reader import BinaryReader
 
 def get_line(button):
     if button == 'Triangle':
@@ -19,7 +18,7 @@ def get_note_type(end_pos):
     else:
         return 'Hold'
 
-def import_to_kara(input_file, output_file):
+def convert_to_kbd(input_file, output_file):
     with open(input_file) as f:
         data = json.loads(f.read())
     kbd = {}
@@ -63,7 +62,7 @@ def import_to_kara(input_file, output_file):
 
 def load_file(input_file):
     output_file = f'{input_file}.kbd.json'
-    import_to_kara(input_file, output_file)
+    convert_to_kbd(input_file, output_file)
 
 
 def main():
