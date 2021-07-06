@@ -54,16 +54,21 @@ def convert_to_kbd(input_file, output_file):
             note = data['Lines'][i]['Notes'][o]
 
         
+            #If Unknown 15 is 0, Line length has to be divided by 2 to get the max percentage, otherwise it has to be divided by 24.
             if not data['Lines'][i]['Unknown 15']:
                 max_percent = data['Lines'][i]['Settings']['Line length'] / 2
             else: 
                 max_percent = data['Lines'][i]['Settings']['Line length'] / 24 
 
+            #To get the actual start and end (relative to current line) percentage of a note, divide the "Start Position" by max percentage
             start_pos =  note['Start position'] / max_percent
             end_pos = note['End position'] / max_percent
 
+            #Calculating line length (milliseconds) by subtracting start time from end time
             line_length = data['Lines'][i]['Settings']['Line end time (ms)'] - data['Lines'][i]['Settings']['Line start time (ms)']
+            #Calculating the actual start pos of a note by multiplying the line length with the start pos percentage and then adding that to the line start time. (milliseconds)
             actual_s_pos = data['Lines'][i]['Settings']['Line start time (ms)'] + (line_length * start_pos)
+
             note_s_pos_list.append(actual_s_pos)
             if note['End position'] > 0:  
                 actual_e_pos = data['Lines'][i]['Settings']['Line start time (ms)'] + (line_length * end_pos)
