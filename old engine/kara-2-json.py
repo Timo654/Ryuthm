@@ -51,6 +51,8 @@ def get_notes(kar, note_count, game):
         note['Cue ID'] = kar.read_uint16()
         if game != 'Yakuza 3':
             note['Unknown 18'] = kar.read_uint32()
+        else:
+            note['Unknown 18'] = 0
         note_list.append(note)
         i += 1
     return note_list
