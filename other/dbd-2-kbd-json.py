@@ -28,6 +28,16 @@ def read_pos(dbd, ms_mode):
     else:
         return dbd.read_uint32()
 
+def get_line(button):
+    if button == 'Triangle':
+        return 0
+    elif button == 'Square':
+        return 2
+    elif button == 'Circle':
+        return 4
+    elif button == 'Cross':
+        return 6
+
 
 def export_to_json(input_file, output_file, ms_mode):
     file = open(input_file, 'rb')
@@ -45,6 +55,7 @@ def export_to_json(input_file, output_file, ms_mode):
     data['Header']['Converted to milliseconds'] = ms_mode
     data['Header']['Note count'] = dbd.read_uint32()
     data['Header']['Unknown'] = dbd.read_uint32()
+    data['Header']['Max score pre-cutscene'] = 0
     # NOTES
     note_list = []
     i = 1
@@ -54,8 +65,15 @@ def export_to_json(input_file, output_file, ms_mode):
         note['Start position'] = read_pos(dbd, ms_mode)
         note['End position'] = read_pos(dbd, ms_mode)
         note['Button type'] = get_button_type(dbd.read_uint32())
+        note['Vertical position'] = get_line(note['Button type'])
+        if note['End position'] > 0:
+            note['Note type'] = 'Hold'
+        else:
+            note['Note type'] = 'Regular'
+        note['Cue ID'] = 0
+        note['Cuesheet ID'] = 3366
         note['Unknown'] = dbd.read_uint32()
-        note['Note type'] = dbd.read_uint32() #regular, hold, multiple
+        note['Note type'] = dbd.read_uint32()
         dbd.seek(4, 1)
         note_list.append(note)
         i += 1

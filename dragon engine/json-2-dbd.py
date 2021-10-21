@@ -54,7 +54,7 @@ def import_to_dbd(input_file, output_file, cutscene_start):
         write_pos(dbd, note['End position'], ms_mode)
         dbd.write_uint32(get_button_type(note['Button type']))
         dbd.write_uint32(note['Unknown'])
-        dbd.write_uint32(note['Unknown 2'])
+        dbd.write_uint32(note['Note type'])
         dbd.write_uint32(0)
 
         i += 1
