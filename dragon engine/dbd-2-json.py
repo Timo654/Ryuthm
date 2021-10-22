@@ -13,8 +13,24 @@ def get_button_type(button):
         return 'Triangle'
     elif button == 3:
         return 'Square'
+    elif button == 4:
+        return 'Unknown'
+    elif button == 5:
+        return 'All'
     else:
         return f'Unknown button {button}'
+
+def get_note_type(note):
+    if note == 0:
+        return 'Regular'
+    elif note == 1:
+        return 'Hold'
+    elif note == 2:
+        return 'Rapid'
+    elif note == 3:
+        return 'Unknown'
+    else:
+        return f'Unknown note {note}'
 
 def convert_to_ms(position):
     if position != 0:
@@ -53,9 +69,9 @@ def export_to_json(input_file, output_file, ms_mode):
         note['Index'] = i
         note['Start position'] = read_pos(dbd, ms_mode)
         note['End position'] = read_pos(dbd, ms_mode)
-        note['Button type'] = get_button_type(dbd.read_uint32())
         note['Unknown'] = dbd.read_uint32()
-        note['Note type'] = dbd.read_uint32() #regular, hold, multiple
+        note['Button type'] = get_button_type(dbd.read_uint32())
+        note['Note type'] = get_note_type(dbd.read_uint32()) #regular, hold, multiple
         dbd.seek(4, 1)
         note_list.append(note)
         i += 1

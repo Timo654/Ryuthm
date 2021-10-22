@@ -13,10 +13,23 @@ def get_button_type(button):
         return 2
     elif button == 'Square':
         return 3
+    elif button == 'Unknown':
+        return 4
+    elif button == 'All':
+        return 5
     else:
-        print(f'Invalid button {button}!')
-        raise ValueError
-
+        raise Exception(f'Invalid button type {button}')
+def get_note_type(note):
+    if note == 'Regular':
+        return 0
+    elif note == 'Hold':
+        return 1
+    elif note == 'Rapid':
+        return 2
+    elif note == 'Unknown':
+        return 3
+    else:
+        raise Exception(f'Invalid note type {note}')
 def convert_to_pos(ms):
     if ms != 0:
         return int(ms * 3)
@@ -52,9 +65,9 @@ def import_to_dbd(input_file, output_file, cutscene_start):
         note = data['Notes'][i]
         write_pos(dbd, note['Start position'], ms_mode)
         write_pos(dbd, note['End position'], ms_mode)
-        dbd.write_uint32(get_button_type(note['Button type']))
         dbd.write_uint32(note['Unknown'])
-        dbd.write_uint32(note['Note type'])
+        dbd.write_uint32(get_button_type(note['Button type']))
+        dbd.write_uint32(get_note_type(note['Note type']))
         dbd.write_uint32(0)
 
         i += 1
