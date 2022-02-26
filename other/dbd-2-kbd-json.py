@@ -13,6 +13,10 @@ def get_button_type(button):
         return 'Triangle'
     elif button == 3:
         return 'Square'
+    elif button == 4:
+        return 'Unknown'
+    elif button == 5:
+        return 'All'
     else:
         return f'Unknown button {button}'
 
@@ -71,11 +75,11 @@ def export_to_json(input_file, output_file, ms_mode):
         else:
             note['Note type'] = 'Regular'
         note['Cue ID'] = 0
-        note['Cuesheet ID'] = 3366
-        note['Unknown'] = dbd.read_uint32()
+        note['Cuesheet ID'] = 0
         note['Note type'] = dbd.read_uint32()
-        dbd.seek(4, 1)
-        note_list.append(note)
+        dbd.seek(8, 1)
+        if note['Button type'] not in ['Unknown', 'All']:
+            note_list.append(note)
         i += 1
 
     data['Notes'] = note_list
